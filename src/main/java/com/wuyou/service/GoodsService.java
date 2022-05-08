@@ -1,10 +1,14 @@
 package com.wuyou.service;
 
 import com.wuyou.model.Goods;
+import com.wuyou.vo.GoodsDetailVo;
+import com.wuyou.vo.GoodsVo;
 
 import java.util.List;
 
 public interface GoodsService {
 
-    List<Goods> getGoods();
+    List<GoodsVo> getGoods();
+
+    GoodsDetailVo getGoodsDetail(String goodsId);
 }
