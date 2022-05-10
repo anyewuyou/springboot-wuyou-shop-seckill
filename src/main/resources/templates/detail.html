@@ -11,33 +11,38 @@
 <table class="table table-hover">
     <tr>
         <td>商品名称</td>
-        <td th:text="${goodsDetailVo.goodsName}"></td>
+        <td clospan="3" th:text="${goodsDetailVo.goodsName}"></td>
     </tr>
     <tr>
         <td>图片名称</td>
-        <td>
+        <td clospan="3" >
             <img th:src="@{${goodsDetailVo.imgPath}}" width="200" height="200">
         </td>
     </tr>
     <tr>
         <td>秒杀开始时间</td>
-        <td th:text="${goodsDetailVo.startTime}"></td>
+        <td clospan="3" th:text="${#dates.format(goodsDetailVo.startTime,'yyyy-MM-dd HH-mm-ss')}"></td>
+        <td>
+            <span th:if="${status eq 0}">秒杀未开始</span>
+            <span th:if="${status eq 1}">秒杀进行中</span>
+            <span th:if="${status eq 2}">秒杀已结束</span>
+        </td>
     </tr>
     <tr>
         <td>商品原价</td>
-        <td th:text="${goodsDetailVo.price}"></td>
+        <td clospan="3" th:text="${goodsDetailVo.price}"></td>
     </tr>
     <tr>
         <td>商品秒杀价</td>
-        <td th:text="${goodsDetailVo.seckillPrice}"></td>
+        <td clospan="3" th:text="${goodsDetailVo.seckillPrice}"></td>
     </tr>
     <tr>
         <td>商品库存</td>
-        <td th:text="${goodsDetailVo.stockNum}"></td>
+        <td clospan="3" th:text="${goodsDetailVo.stockNum}"></td>
     </tr>
     <tr>
         <td>秒杀结束时间</td>
-        <td th:text="${goodsDetailVo.endTime}"></td>
+        <td clospan="3" th:text="${goodsDetailVo.endTime}"></td>
     </tr>
 </table>
 </body>

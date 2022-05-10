@@ -1,6 +1,5 @@
 package com.wuyou.controller;
 
-import com.wuyou.model.Goods;
 import com.wuyou.service.GoodsService;
 import com.wuyou.vo.GoodsDetailVo;
 import com.wuyou.vo.GoodsVo;
@@ -9,8 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -34,6 +33,31 @@ public class GoodsController {
                                @PathVariable String goodsId){
         GoodsDetailVo goodsDetailVo=goodsService.getGoodsDetail(goodsId);
         model.addAttribute("goodsDetailVo",goodsDetailVo);
+
+        Date startTime=goodsDetailVo.getStartTime();
+        Date endTime=goodsDetailVo.getEndTime();
+        Date nowTime=new Date();
+
+        //判断秒杀的状态
+        int status;
+        //未开始状态下，倒计时的秒数
+        int remainSeconds=-1;
+        if (nowTime.before(startTime)){
+            //秒杀未开始
+            status=0;
+            remainSeconds=(int)((startTime.getTime()-nowTime.getTime())/1000);
+        }else if(nowTime.after(endTime)){
+            //秒杀已结束
+            status=2;
+
+        }else{
+            //秒杀进行中
+            status=1;
+        }
+
+        model.addAttribute("status",status);
+        model.addAttribute("remainSeconds",remainSeconds);
+
         return "detail";
     }
 }
