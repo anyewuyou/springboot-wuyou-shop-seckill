@@ -11,4 +11,6 @@ public interface GoodsService {
     List<GoodsVo> getGoods();
 
     GoodsDetailVo getGoodsDetail(String goodsId);
+
+    List<GoodsVo> selectGoods();
 }

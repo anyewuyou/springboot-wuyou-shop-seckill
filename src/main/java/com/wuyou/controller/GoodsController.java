@@ -22,7 +22,8 @@ public class GoodsController {
     @GetMapping("/")
     public String /*List<Goods>*/ list(Model model){
         //逐层调用      controller——>service——>dao——>xml
-        List<GoodsVo> result=goodsService.getGoods();
+//        List<GoodsVo> result=goodsService.getGoods();
+        List<GoodsVo> result=goodsService.selectGoods();
         model.addAttribute("goodsList",result);
         return "list";
 //        return goodsService.getGoods();

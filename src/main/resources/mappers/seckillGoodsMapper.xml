@@ -9,4 +9,8 @@
         from seckill_goods
         where goods_id=#{goodsId}
     </select>
+    <select id="getSeckillGoods" resultType="com.wuyou.model.SeckillGoods">
+        select id,goods_id,seckill_price,stock_num,start_time,end_time
+        from seckill_goods
+    </select>
 </mapper>

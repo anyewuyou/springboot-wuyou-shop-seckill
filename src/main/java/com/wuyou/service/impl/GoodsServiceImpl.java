@@ -64,4 +64,26 @@ public class GoodsServiceImpl implements GoodsService {
         goodsDetailVo.setEndTime(seckillGoods.getEnd_time());
         return goodsDetailVo;
     }
+
+    @Override
+    public List<GoodsVo> selectGoods() {
+        List<Goods> goodsList=goodsMapper.selectGoods();
+        List<GoodsVo> result=new ArrayList<>();
+        for (Goods goods:goodsList){
+            GoodsVo goodsVo=new GoodsVo();
+            goodsVo.setGoodsId(goods.getGoods_id());
+            goodsVo.setGoodsName(goods.getGoods_name());
+            goodsVo.setGoodsType(goods.getGoods_type());
+            goodsVo.setPrice(goods.getPrice());
+            goodsVo.setImgPath(goods.getImg_path());
+
+            goodsVo.setSeckillPrice(goods.getSeckillGoods().getSeckill_price());
+            goodsVo.setStockNum(goods.getSeckillGoods().getStock_num());
+
+            result.add(goodsVo);
+        }
+        return result;
+    }
+
+
 }

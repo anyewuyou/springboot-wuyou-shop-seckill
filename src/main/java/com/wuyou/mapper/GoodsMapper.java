@@ -11,4 +11,6 @@ public interface GoodsMapper {
     List<Goods> getGoods();
 
     Goods getGoodsById(String goodsId);
+
+    List<Goods> selectGoods();
 }
