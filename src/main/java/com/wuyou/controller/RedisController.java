@@ -17,9 +17,19 @@ public class RedisController {
 //        redisService.initData(goodsId, stockNum);
 //        return "Success";
 //    }
-@GetMapping("/initData")
-public String initData(){
-    redisService.initData();
-    return "Success";
-}
+    @GetMapping("/initData")
+    public String initData(){
+        redisService.initData();
+        return "Success";
+    }
+
+    @GetMapping("seckillAPI")
+    public String seckill(String userId,String goodsId){
+        if (userId==null||goodsId==null){
+            return "参数异常";
+        }
+        System.out.println(userId+"---------"+goodsId);
+        String result=redisService.secKill(userId, goodsId);
+        return result;
+    }
 }

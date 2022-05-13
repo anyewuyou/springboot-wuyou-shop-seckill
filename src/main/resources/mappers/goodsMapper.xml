@@ -27,13 +27,14 @@
             <result property="stock_num" column="stock_num"/>
         </association>
     </resultMap>
-    
+
     <select id="selectGoods" resultMap="goodsResult">
-        SELECT a.'good_id',a.'goods_name',a.'goods_type',a.'price',a.'img_path',
-               b.'seckill_price',b.'stock_num'
+        SELECT
+               a.`goods_id`,a.`goods_name`,a.`goods_type`,a.`price`,a.`img_path`,
+               b.`seckill_price`,b.`stock_num`
         FROM goods AS a
         LEFT JOIN seckill_goods AS b
-        ON a.'goods_id'=b.'goods_id'
+        ON a.`goods_id`=b.`goods_id`
     </select>
     
 </mapper>

@@ -58,4 +58,46 @@ public class RedisServiceImpl implements RedisService {
 
         }
     }
+
+    @Override
+    public String secKill(String userId, String goodsId) {
+        //秒杀时刻的逻辑
+        //  判断用户id的有效性（在补完登录系统后，自行补充）
+        //  判断goodsId的有效性
+        //      判断当前是否处于可秒杀的状态
+        //          判断是否在秒杀的开始时间和结束时间范围内
+        //          判断是否有剩余库存
+        //          判断用户的秒杀权限（是否秒杀成功过）
+        //      减少库存
+        //      新增订单
+
+        //先判断是否在秒杀开始时间之后  （还需要存储结束时间  判断是否在结束时间之前）
+        String dateStr=(String)redisUtil.get(goodsId+"_startTime");
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startTime=null;
+        try{
+            startTime=format.parse(dateStr);
+        }catch (Exception e){
+        }
+        System.out.println(dateStr);
+        System.out.println(startTime);
+        if (startTime==null||new Date().before(startTime)){
+            return "秒杀还未开始";
+        }
+
+        int stockNum=(int)redisUtil.get(goodsId+"_count");
+        if (stockNum<=0){
+            return "已被秒杀一空";
+        }
+        if(redisUtil.get(goodsId+"_"+userId)!=null){
+            return "用户已秒杀成功过";
+        }
+        //减库存，生成订单
+        redisUtil.decr(goodsId+"_count");
+        //限额为1的情况，  可以这样处理
+        //如果限额为2，获取value进行自增
+        //      并且上面的判断是  get的值 > 限额
+        redisUtil.set(goodsId+"_"+userId,1);
+        return userId+"用户秒杀成功";
+    }
 }

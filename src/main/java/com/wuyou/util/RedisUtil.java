@@ -27,4 +27,8 @@ public class RedisUtil {
         }
         return redisTemplate.opsForValue().get(key);
     }
+
+    public void decr(String key){
+        redisTemplate.opsForValue().decrement(key);
+    }
 }
