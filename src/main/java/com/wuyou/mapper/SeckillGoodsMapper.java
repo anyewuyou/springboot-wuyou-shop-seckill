@@ -10,4 +10,6 @@ public interface SeckillGoodsMapper {
     SeckillGoods getSeckillGoodsById(String goodsId);
 
     List<SeckillGoods> getSeckillGoods();
+
+    void reduceStockNum(SeckillGoods seckillGoods);
 }

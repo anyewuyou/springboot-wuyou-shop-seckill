@@ -85,5 +85,13 @@ public class GoodsServiceImpl implements GoodsService {
         return result;
     }
 
+    @Override
+    public void reduceStockNum(String goodsId) {
+        SeckillGoods seckillGoods=seckillGoodsMapper.getSeckillGoodsById(goodsId);
+        seckillGoods.setStock_num(seckillGoods.getStock_num()-1);
+        seckillGoodsMapper.reduceStockNum(seckillGoods);
+        System.out.println(seckillGoods.getStock_num());
+    }
+
 
 }

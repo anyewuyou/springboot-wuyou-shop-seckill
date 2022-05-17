@@ -5,9 +5,16 @@ import com.wuyou.model.SeckillGoods;
 import com.wuyou.service.RedisService;
 import com.wuyou.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +68,12 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public String secKill(String userId, String goodsId) {
+//        return handle(userId,goodsId);
+//        return handleByTrans(userId,goodsId);
+        return handleByLua(userId,goodsId);
+    }
+
+    public String handle(String userId,String goodsId){
         //秒杀时刻的逻辑
         //  判断用户id的有效性（在补完登录系统后，自行补充）
         //  判断goodsId的有效性
@@ -99,5 +112,81 @@ public class RedisServiceImpl implements RedisService {
         //      并且上面的判断是  get的值 > 限额
         redisUtil.set(goodsId+"_"+userId,1);
         return userId+"用户秒杀成功";
+    }
+
+    public String handleByTrans(String userId,String goodsId){
+        String dateStr=(String)redisUtil.get(goodsId+"_startTime");
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startTime=null;
+        try{
+            startTime=format.parse(dateStr);
+        }catch (Exception e){
+        }
+        System.out.println(dateStr);
+        System.out.println(startTime);
+        if (startTime==null||new Date().before(startTime)){
+            return "秒杀还未开始";
+        }
+        if(redisUtil.get(goodsId+"_"+userId)!=null){
+            return "用户已秒杀成功过";
+        }
+        SessionCallback sessionCallback=new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                //编写事务的逻辑
+                //watch-->multi-->command-->exec
+                operations.watch(goodsId+"_count");
+
+                int stockNum=(int)redisUtil.get(goodsId+"_count");
+                if (stockNum<=0){
+                    return "已被秒杀一空";
+                }
+                operations.multi();
+                redisUtil.decr(goodsId+"_count");
+                redisUtil.set(goodsId+"_"+userId,1);
+                return operations.exec();
+            }
+        };
+        redisUtil.execute(sessionCallback);
+        if (redisUtil.hasKey(goodsId+"_"+userId)){
+            return userId+"用户秒杀成功";
+        }
+        return userId+"用户秒杀失败";
+    }
+//使用lua脚本（分布式锁）
+    public String handleByLua(String userId,String goodsId){
+        String dateStr=(String)redisUtil.get(goodsId+"_startTime");
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startTime=null;
+        try{
+            startTime=format.parse(dateStr);
+        }catch (Exception e){
+        }
+        System.out.println(dateStr);
+        System.out.println(startTime);
+        if (startTime==null||new Date().before(startTime)){
+            return "秒杀还未开始";
+        }
+
+        DefaultRedisScript<Long> script=new DefaultRedisScript<>();
+        script.setResultType(Long.class);
+        script.setScriptSource(new ResourceScriptSource(
+                new ClassPathResource("lua/seckill.lua")));
+        
+        List<String> keyList=new ArrayList<>();
+        keyList.add(userId);
+        keyList.add(goodsId);
+
+        Object result=redisUtil.execute(script,keyList);
+        String reStr=String.valueOf(result);
+        if ("0".equals(reStr)){
+            return "已被秒杀一空";
+        }else if("1".equals(reStr)){
+            return userId+"秒杀成功";
+        }else if ("2".equals(reStr)){
+            return userId+"已经秒杀过";
+        }else {
+            return "秒杀异常";
+        }
     }
 }

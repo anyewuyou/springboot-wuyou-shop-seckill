@@ -2,8 +2,11 @@ package com.wuyou.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -31,4 +34,17 @@ public class RedisUtil {
     public void decr(String key){
         redisTemplate.opsForValue().decrement(key);
     }
+//提供调用事务的方法
+    public Object execute(SessionCallback sessionCallback){
+        return redisTemplate.execute(sessionCallback);
+    }
+
+    public Boolean hasKey(String key){
+        return redisTemplate.hasKey(key);
+    }
+//提供调用lua脚本的方法
+    public Object execute(RedisScript script, List keyList){
+        return redisTemplate.execute(script,keyList);
+    }
 }
+

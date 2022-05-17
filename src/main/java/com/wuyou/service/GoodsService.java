@@ -1,6 +1,5 @@
 package com.wuyou.service;
 
-import com.wuyou.model.Goods;
 import com.wuyou.vo.GoodsDetailVo;
 import com.wuyou.vo.GoodsVo;
 
@@ -13,4 +12,6 @@ public interface GoodsService {
     GoodsDetailVo getGoodsDetail(String goodsId);
 
     List<GoodsVo> selectGoods();
+
+    void reduceStockNum(String goodsId);
 }
