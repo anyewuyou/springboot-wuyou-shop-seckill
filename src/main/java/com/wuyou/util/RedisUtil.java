@@ -34,6 +34,9 @@ public class RedisUtil {
     public void decr(String key){
         redisTemplate.opsForValue().decrement(key);
     }
+    public Object getAndDelete(String key){
+        return redisTemplate.opsForValue().getAndDelete(key);
+    }
 //提供调用事务的方法
     public Object execute(SessionCallback sessionCallback){
         return redisTemplate.execute(sessionCallback);

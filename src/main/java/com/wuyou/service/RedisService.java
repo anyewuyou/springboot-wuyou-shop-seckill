@@ -6,4 +6,5 @@ public interface RedisService {
     void initData();
 
     String secKill(String userId,String goodsId);
+
 }

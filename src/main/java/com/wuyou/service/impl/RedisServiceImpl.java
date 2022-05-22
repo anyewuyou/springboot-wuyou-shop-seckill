@@ -162,8 +162,8 @@ public class RedisServiceImpl implements RedisService {
             startTime=format.parse(dateStr);
         }catch (Exception e){
         }
-        System.out.println(dateStr);
-        System.out.println(startTime);
+//        System.out.println(dateStr);
+//        System.out.println(startTime);
         if (startTime==null||new Date().before(startTime)){
             return "秒杀还未开始";
         }
@@ -189,4 +189,6 @@ public class RedisServiceImpl implements RedisService {
             return "秒杀异常";
         }
     }
+
+
 }
